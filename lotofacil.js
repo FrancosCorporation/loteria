@@ -163,7 +163,7 @@ async function main() {
   console.log("Escolha a loteria:");
   console.log("1 - Mega-Sena (R$7,00)");
   console.log("2 - Lotofácil (R$3,50)");
-  console.log("3 - Lotomania (R$3,00)");
+  console.log("3 - Lotomania  (50 N°) (R$3,00)");
   console.log("4 - Dia de Sorte (R$2,50)");
   const choice = await ask("Digite 1, 2, 3 ou 4: ");
 
