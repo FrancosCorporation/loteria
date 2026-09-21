@@ -1,14 +1,15 @@
 {
   "name": "lotofacil",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Coleta e analise dos resultados das loterias da Caixa",
+  "main": "lotofacil.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node lotofacil.js",
+    "test": "echo \"sem testes automatizados\""
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Rodolfo Franco (FrancosCorporation)",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "node-fetch": "^3.3.2"
