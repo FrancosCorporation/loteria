@@ -1,7 +1,9 @@
 node_modules
 .git
+archive
 dist
 build
 *.log
+*.txt.bak
 .env
 npm-debug.log*
