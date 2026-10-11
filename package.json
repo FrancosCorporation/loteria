@@ -1,16 +1,19 @@
 {
   "name": "lotofacil",
   "version": "1.0.0",
-  "description": "Coleta e analise dos resultados das loterias da Caixa",
+  "description": "Coleta e análise local dos resultados oficiais das loterias da Caixa",
   "main": "lotofacil.js",
   "scripts": {
     "start": "node lotofacil.js",
-    "test": "echo \"sem testes automatizados\""
+    "dev": "node --watch lotofacil.js"
   },
   "keywords": [],
   "author": "Rodolfo Franco (FrancosCorporation)",
   "license": "MIT",
   "type": "commonjs",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "dependencies": {
     "node-fetch": "^3.3.2"
   }

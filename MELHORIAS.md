@@ -3,6 +3,23 @@
 > **Gerado por análise de código em 2026-10-05** · Stack: Node 20 + node-fetch (coleta API Caixa)
 > Branch: `main` · Repositório: `/home/servidor/Git/loteria`
 
+## Status de execução (2026-10-11)
+
+**Implementados; verificações de runtime não foram executadas:**
+
+- [x] DEVOPS-01 — node_modules removido do índice em be9258b; package-lock mantido.
+- [x] BUG-01 — timeout de 15 s na API da Caixa, com diagnóstico de aborto.
+- [x] DEVOPS-02 — instalação Docker agora depende somente de npm ci.
+- [x] SEC-01 — linhas inválidas são ignoradas com aviso, backup criado antes da primeira escrita e falhas de main tratadas.
+- [x] IMP-01 e DOC-01 — variantes preservadas em archive/ e README alinhado ao entrypoint e ao Compose.
+
+**Pendentes:**
+
+- [ ] TEST-01 — não foi adicionada nem executada suíte de testes nesta rodada; o falso script echo foi removido.
+- [ ] DEVOPS-03 — CI continua pendente; workflows GitHub não podem ser publicados com a credencial OAuth atual.
+
+O diretório node_modules já estava ausente da árvore de trabalho antes da execução; os históricos .txt não foram alterados. Foram feitos apenas checks estáticos e npm audit.
+
 ## 0. Como usar este documento
 
 - Cada item tem 6 campos: **Arquivo:** (caminho:linha reais, lidos no repositório), **Evidência:** (constatação verificada com comando), **Impacto:**, **Mudança:** (o que fazer), **Aceite:** (condição de aceite) e **Verificação:** (bloco bash executável).
