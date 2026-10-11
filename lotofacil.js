@@ -4,6 +4,8 @@ const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fet
 const readline = require('readline');
 
 const BASE_API = 'https://servicebus2.caixa.gov.br/portaldeloterias/api/';
+const FETCH_TIMEOUT_MS = 15000;
+const backedUpFiles = new Set();
 
 async function ask(question) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -13,11 +15,39 @@ async function ask(question) {
 function loadFile(filename) {
   if (!fs.existsSync(filename)) return [];
   const content = fs.readFileSync(filename, 'utf-8');
-  return content ? content.trim().split('\n').map(line => JSON.parse(line)) : [];
+  if (!content) return [];
+
+  const savedData = [];
+  content.split(/\r?\n/).forEach((line, index) => {
+    if (!line.trim()) return;
+
+    try {
+      const record = JSON.parse(line);
+      if (!record || !Number.isSafeInteger(record.numero) || record.numero < 1
+        || !Array.isArray(record.dezenas)
+        || record.dezenas.length === 0
+        || !record.dezenas.every(n => Number.isSafeInteger(n) && n >= 1 && n <= 100)) {
+        throw new Error('formato de concurso inválido');
+      }
+      savedData.push(record);
+    } catch (err) {
+      console.warn('Linha ' + (index + 1) + ' inválida em ' + filename
+        + '; ignorada: ' + err.message);
+    }
+  });
+
+  return savedData;
 }
 
 function saveLine(filename, data) {
-  fs.appendFileSync(filename, JSON.stringify(data) + '\n');
+  if (!backedUpFiles.has(filename)) {
+    if (fs.existsSync(filename)) {
+      fs.copyFileSync(filename, filename + '.bak');
+    }
+    backedUpFiles.add(filename);
+  }
+
+  fs.appendFileSync(filename, JSON.stringify(data) + '\n', 'utf-8');
 }
 
 function getLastConcurso(savedData) {
@@ -34,7 +64,9 @@ async function fetchConcurso(apiBase, startConcurso, savedData, loteriaName) {
     const url = `${apiBase}${concurso}`;
     try {
       await delay(100); // Evita bloqueio de IP
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
 
       if (!res.ok) {
         if (res.status === 500 || res.status === 404) {
@@ -57,7 +89,12 @@ async function fetchConcurso(apiBase, startConcurso, savedData, loteriaName) {
       concurso++;
 
     } catch (err) {
-      console.error(`Erro no concurso ${concurso}: ${err.message}`);
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+        console.error('Timeout de ' + FETCH_TIMEOUT_MS
+          + ' ms ao buscar o concurso ' + concurso + '.');
+      } else {
+        console.error('Erro no concurso ' + concurso + ': ' + err.message);
+      }
       break;
     }
   }
@@ -158,7 +195,9 @@ async function main() {
     console.log(`Jogo ${i+1}: [ ${j.join(', ')} ] | Soma: ${soma} | P/I: ${pares}/${j.length - pares}`);
   });
 
-  process.exit(0);
 }
 
-main();
+main().catch(err => {
+  console.error('Falha ao executar a coleta: ' + err.message);
+  process.exitCode = 1;
+});
