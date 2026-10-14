@@ -16,7 +16,7 @@
 **Pendentes:**
 
 - [ ] TEST-01 — não foi adicionada nem executada suíte de testes nesta rodada; o falso script echo foi removido.
-- [ ] DEVOPS-03 — CI continua pendente; workflows GitHub não podem ser publicados com a credencial OAuth atual.
+- [x] DEVOPS-03 — CI estática criada em 2026-10-14 (token com escopo `workflow`): sintaxe JS, `npm ci`, `npm audit --audit-level=high`, `docker compose config -q` e `git diff --check` em Node 22/24.
 
 O diretório node_modules já estava ausente da árvore de trabalho antes da execução; os históricos .txt não foram alterados. Foram feitos apenas checks estáticos e npm audit.
 

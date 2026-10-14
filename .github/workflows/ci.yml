@@ -1,0 +1,41 @@
+name: Static validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static:
+    name: Node ${{ matrix.node-version }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - name: Verificação de sintaxe JavaScript
+        run: |
+          node --check lotofacil.js
+          node --check archive/lotofacil_oldw.js || true
+          node --check archive/lotofacil_qwen3.5.js || true
+      - run: npm ci
+      - name: Auditoria de dependências
+        run: npm audit --audit-level=high
+      - name: Compose config válido
+        run: docker compose -f compose.yaml config -q
+      - name: Checagem de diff
+        run: git diff --check HEAD
